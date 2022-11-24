@@ -1,0 +1,26 @@
+---
+# vars file for camunda
+
+camunda_url: "https://downloads.camunda.cloud/release/camunda-bpm/tomcat/7.18/camunda-bpm-tomcat-7.18.0.tar.gz"
+
+camunda_binary_checksum: "sha256:023d521b50fd0776dec007cf70cab91a8e00da530d842250e3f940222f6e5be8."
+
+tomcat_version: "9.0.58"
+
+camunda_archive_path: "{{ camunda_path }}/camunda.tar"
+camunda_server_path: "{{ camunda_path }}/server/apache-tomcat-{{tomcat_version}}"
+camunda_file_hook: "{{ camunda_path }}/start-camunda.sh"
+
+
+
+
+
+java_src: https://cdn.azul.com/zulu/bin/zulu15.44.13-ca-jdk15.0.9-linux_x64.tar.gz
+java_checksum: sha256:b0323a49145dc7f1a2235d0b7fdb83c62f5c8404803d6baf5d2ea9544e8a554f
+java_dest: /opt
+java_filename: "{{java_dest}}/zulu-jdk-15"
+java_archive: "{{java_dest}}/zulu.tar.gz"
+java_home: "/opt/java"
+
+
+  

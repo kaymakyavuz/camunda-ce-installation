@@ -1,0 +1,38 @@
+---
+  - name: Create Camunda folder
+    file:
+      state: directory
+      path: "{{ java_filename }}"
+      recurse: true
+
+  - name: Install Java | Download Java
+    get_url:
+      url: "{{java_src}}"
+      dest: "{{ java_archive }}"
+      validate_certs: no
+
+  - name: Install Java | Unpacking Java
+    unarchive:
+      src: "{{java_archive}}"
+      dest: "{{java_filename}}"
+      extra_opts: [--strip-components=1]
+      remote_src: true
+
+  - name: Install Java | Changing Ownership of Java
+    file:
+      state: directory
+      path: '{{java_filename}}'
+      owner: root
+      group: root
+      recurse: yes
+
+  - name: Install Java | Creating Symlink for Java
+    file:
+      src: "{{java_filename}}"
+      dest: "{{java_home}}"
+      state: link
+
+  - name: Install Java | Delete the downloaded file
+    file:
+      state: absent
+      path: '{{java_archive}}'

@@ -1,0 +1,90 @@
+--- # ---
+- name: Create Camunda folder
+  file:
+    state: directory
+    path: "{{ camunda_path }}"
+    recurse: true
+
+- name: Check if the start-camunda.sh exists
+  stat:
+    path: "{{camunda_file_hook}}"
+  register: camunda_hook    
+
+- name: Download Camunda
+  get_url:
+    url: "{{ camunda_url }}"
+    dest: "{{ camunda_archive_path }}"
+    checksum: "{{ camunda_binary_checksum }}"
+  when: not camunda_hook.stat.exists or force_install
+
+- name: Delete start-camunda.sh if forced
+  file:
+    state: absent
+    path: "{{ camunda_file_hook }}"
+  when: force_install
+
+- name: Unpack Camunda
+  unarchive:
+    src: "{{ camunda_archive_path }}"
+    dest: "{{ camunda_path }}"
+    creates: "{{ camunda_file_hook }}"
+    remote_src: true
+
+- name: Remove archive file
+  file:
+    state: absent
+    path: "{{ camunda_archive_path }}"
+
+- name: copy start-camunda.sh
+  template:
+    src: templates/start-camunda.sh
+    dest: "{{camunda_path}}"
+    mode: "0751"
+  when: not camunda_hook.stat.exists or force_install      
+
+- name: Add server.xml
+  template:
+    src: templates/server.xml
+    dest: "{{camunda_server_path}}/conf"
+    owner: root
+  when: not camunda_hook.stat.exists or force_install  
+
+- name: Add setenv.sh
+  template:
+    src: templates/setenv.sh
+    dest: "{{camunda_server_path}}/bin"
+    owner: root
+  when: not camunda_hook.stat.exists or force_install  
+
+- name: Add custom Java path | setenv
+  lineinfile:
+    path: "{{camunda_server_path}}/bin/setenv.sh"
+    insertbefore: BOF
+    line: "export JAVA_HOME={{ java_home }}"
+  when: java_install and java_home != ""
+
+- name: Add custom Java path | start-camunda
+  lineinfile:
+    path: "{{ camunda_path }}/start-camunda.sh"
+    insertafter: "^#!"
+    line: "export JAVA_HOME={{ java_home }}"
+  when: java_install and java_home != ""
+
+- name: Add JDBC Driver - TomCat
+  get_url:  
+    url: "{{ jdbc.link }}"
+    dest: "{{item}}"
+  with_items:
+    - "{{camunda_server_path}}/lib"
+    - "{{camunda_path}}/lib"
+
+- name: remove example job 
+  file:
+    state: absent 
+    path: "{{camunda_server_path}}/webapps/camunda-invoice"    
+ 
+- name: create systemd service file
+  template:
+    src: templates/camunda.service
+    dest: /etc/systemd/system/
+  notify: start and enable camunda service

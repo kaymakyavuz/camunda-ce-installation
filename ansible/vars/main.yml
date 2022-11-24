@@ -1,0 +1,24 @@
+---
+# vars file for camunda
+playbook_repository:  "playbook repository"
+
+force_install: true
+java_install: false
+
+camunda_path: "/var/opt/camunda"
+
+
+jdbc_driver_version: ojdbc11.jar
+jdbc:
+  driverClassName: oracle.jdbc.driver.oracledriver
+  url: jdbc:oracle://10.0.2.2:5432/camunda
+  username: camunda
+  link: "https://download.oracle.com/otn-pub/otn_software/jdbc/217/{{jdbc_driver_version}}"
+
+
+
+catalina_opts:
+  xms: 512m
+  xmx: 2524m
+
+  

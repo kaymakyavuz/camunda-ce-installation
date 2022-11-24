@@ -1,0 +1,16 @@
+[Unit]
+Description=Camunda Tomcat
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+WorkingDirectory={{camunda_server_path}}
+
+ExecStart={{camunda_server_path}}/bin/startup.sh
+ExecStop={{camunda_server_path}}/bin/shutdown.sh
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

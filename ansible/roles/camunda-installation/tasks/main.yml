@@ -1,0 +1,15 @@
+---
+# tasks file for camunda
+
+- name: Write Playbook Version /etc/{{role_name}}-release
+  copy:
+    dest: /etc/{{role_name}}-release
+    content: |
+      playbook-repository: {{ playbook_repository }}
+      last-run-tags: {{ ansible_run_tags }}
+      start-run: {{ansible_date_time.iso8601}}
+    mode: 0777
+    
+- include: install_java.yml
+  when: java_install
+- include: install.yml

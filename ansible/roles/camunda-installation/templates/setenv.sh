@@ -1,0 +1,1 @@
+export CATALINA_OPTS="-Xms{{catalina_opts.xms}} -Xmx{{catalina_opts.xmx}}"

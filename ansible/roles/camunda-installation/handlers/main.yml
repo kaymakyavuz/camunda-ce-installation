@@ -1,0 +1,8 @@
+---
+# handlers file for camunda
+- name: start and enable camunda service
+  systemd:
+    name: camunda
+    daemon_reload: True
+    state: started
+    enabled: True
